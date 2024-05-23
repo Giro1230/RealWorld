@@ -27,9 +27,9 @@ public class Tag {
 
   @Comment("생성날짜")
   @Column(nullable = false)
-  private LocalDateTime creatAt;
+  private LocalDateTime createdAt;
 
   @Comment("수정날짜")
   @Column
-  private LocalDateTime updateAt;
+  private LocalDateTime updatedAt;
 }

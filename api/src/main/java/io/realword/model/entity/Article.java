@@ -6,6 +6,8 @@ import lombok.*;
 import org.hibernate.annotations.Comment;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Getter
@@ -28,11 +30,18 @@ public class Article {
   @Column
   private String body;
 
+  @ManyToOne
+  @JoinColumn(name = "user", nullable = false)
+  private User user;
+
+  @OneToMany(mappedBy = "article", fetch = FetchType.EAGER)
+  private List<Tag> tag = new ArrayList<>();
+
   @Comment("생성날짜")
   @Column(nullable = false)
-  private LocalDateTime creatAt;
+  private LocalDateTime createdAt;
 
   @Comment("수정날짜")
   @Column
-  private LocalDateTime updateAt;
+  private LocalDateTime updatedAt;
 }
