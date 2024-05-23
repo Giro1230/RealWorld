@@ -24,21 +24,26 @@ public class ArticleDTO implements DTOFunc{
   private LocalDateTime updatedAt;
 
   @Override
-  public Article InsertDataConverter () {
+  public Article insertDataConverter () {
     if (this.id == null) {
       this.id = 0L;
     }
-
+    insertTime();
     return new Article (this.id, this.title, this.body, this.user, this.tag, this.createdAt, null);
   }
 
   @Override
-  public Article UpdateDataConverter () {
+  public Article updateDataConverter () {
+    insertTime();
     return new Article(this.id, this.title, this.body, this.user, this.tag, this.createdAt, this.updatedAt);
   }
 
   @Override
-  public void InsertTime() {
-
+  public void insertTime() {
+    if(this.createdAt == null) {
+      this.createdAt = LocalDateTime.now();
+    } else if(this.updatedAt == null) {
+      this.updatedAt = LocalDateTime.now();
+    }
   }
 }

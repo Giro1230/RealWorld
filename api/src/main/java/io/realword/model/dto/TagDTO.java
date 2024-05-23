@@ -19,7 +19,7 @@ public class TagDTO implements DTOFunc{
   private LocalDateTime updatedAt;
 
   @Override
-  public Tag InsertDataConverter(){
+  public Tag insertDataConverter(){
     if (this.id == null) {
       this.id = 0L;
     }
@@ -28,12 +28,16 @@ public class TagDTO implements DTOFunc{
   }
 
   @Override
-  public Tag UpdateDataConverter(){
+  public Tag updateDataConverter(){
     return new Tag(this.id, this.tagName, this.article, this.createdAt, this.updatedAt);
   }
 
   @Override
-  public void InsertTime() {
-
+  public void insertTime() {
+    if(this.createdAt == null) {
+      this.createdAt = LocalDateTime.now();
+    } else if(this.updatedAt == null) {
+      this.updatedAt = LocalDateTime.now();
+    }
   }
 }
