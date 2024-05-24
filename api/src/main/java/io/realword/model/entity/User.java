@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "user")
-public class UserEntity {
+public class User {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,19 +31,17 @@ public class UserEntity {
   @Column(nullable = false)
   private String password;
 
-  @Comment("생성날짜")
   @Column
   private String bio;
 
-  @Comment("생성날짜")
   @Column
   private String image;
 
   @Comment("생성날짜")
   @Column(nullable = false)
-  private LocalDateTime creatAt;
+  private LocalDateTime createdAt;
 
   @Comment("수정날짜")
   @Column
-  private LocalDateTime updateAt;
+  private LocalDateTime updatedAt;
 }

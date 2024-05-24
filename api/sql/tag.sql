@@ -1,0 +1,9 @@
+CREATE TABLE tag
+(
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  tagName VARCHAR(13) NOT NULL,
+  article BIGINT NOT NULL,
+  createdAt DATETIME NOT NULL,
+  updatedAt DATETIME,
+  CONSTRAINT tag_fk FOREIGN KEY (article) REFERENCES article(id)
+);

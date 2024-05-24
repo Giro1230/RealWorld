@@ -1,0 +1,9 @@
+CREATE TABLE Article (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255),
+  body TEXT,
+  userId BIGINT NOT NULL,
+  createdAt DATETIME NOT NULL,
+  updatedAt DATETIME,
+  FOREIGN KEY (userId) REFERENCES User(id)
+);
