@@ -1,48 +1,66 @@
 package io.realword.service.imp;
 
 import io.realword.model.dto.UserDTO;
+import io.realword.service.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Optional;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 class UserServiceImpTest {
 
-  private final Logger logger = LoggerFactory.getLogger(UserServiceImp.class);
-  private final UserServiceImp userService;
-
-  public UserServiceImpTest(UserServiceImp userService) {
-    this.userService = userService;
-  }
+  Logger logger = LoggerFactory.getLogger(UserServiceImpTest.class);
+  @Autowired
+  UserServiceImp userService;
+  @Autowired
+  UserRepository userRepository;
 
   @BeforeEach
-  void setUp() {
+  void before () {
     logger.info("TEST Start");
   }
 
   @Test
   void save() {
     // given
-    UserDTO data = new UserDTO(0L, "test", "TEST@TEST", "test", null, null, null, null);
+    UserDTO data = new UserDTO(null, "test", "test@test","test",null,null,null,null);
+    logger.info("insert data : {}", data.toString());
 
     // when
-    data = (UserDTO)userService.save(data);
+    data = (UserDTO) userService.save(data);
 
     // then
-    logger.info("save test return data : {}", data);
+
+    logger.info("user save return : {}", data.toString());
   }
 
   @Test
   void getUserById() {
+    // given
+    Long userId = 1L;
+
+    // when
+    UserDTO data = (UserDTO) userService.getUserById(userId);
+
+    // then
+    logger.info("getUserId : {}", data.toString());
   }
 
   @Test
   void getUserList() {
+    // given
+
+    // when
+    List<Object> datas = userService.getUserList();
+
+    // then
+    logger.info("getAllUser : {}", datas.toArray());
   }
 
   @Test

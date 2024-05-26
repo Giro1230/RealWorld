@@ -27,8 +27,7 @@ public class UserServiceImp implements CRUDInterface {
   public Object save(Object data) {
     try {
       UserDTO userDTO = (UserDTO) data;
-      userDTO.insertTime(); // 예시에서는 insertTime 메서드가 UserDTO 클래스에 있음을 가정합니다.
-      User userEntity = userDTO.insertDataConverter(); // 예시에서는 insertDataConverter 메서드가 UserDTO 클래스에 있음을 가정합니다.
+      User userEntity = userDTO.insertDataConverter();
       userEntity = userRepository.save(userEntity);
       return userEntity.toDTO();
     } catch (Exception e) {

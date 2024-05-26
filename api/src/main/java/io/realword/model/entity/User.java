@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table
+@Table(name="user")
 public class User {
 
   @Id
@@ -38,7 +38,7 @@ public class User {
   private String image;
 
   @Comment("생성날짜")
-  @Column(nullable = false)
+  @Column(name = "", nullable = false)
   private LocalDateTime createdAt;
 
   @Comment("수정날짜")
@@ -67,4 +67,18 @@ public class User {
       .updatedAt(this.updatedAt)
       .build();
   }
+
+  @Override
+  public String toString() {
+    return "User{id=" + id +
+      ", username='" + username + '\'' +
+      ", email='" + email + '\'' +
+      ", password='" + password + '\'' +
+      ", bio='" + bio + '\'' +
+      ", image='" + image + '\'' +
+      ", createdAt=" + createdAt +
+      ", updatedAt=" + updatedAt +
+      '}';
+  }
+
 }

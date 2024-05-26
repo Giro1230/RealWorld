@@ -22,15 +22,12 @@ public class UserDTO implements DTOFunc {
 
   @Override
   public User insertDataConverter() {
-    if(this.id == null) {
-      this.id = 0L;
-    }
     return new User(this.id, this.username, this.email, this.password, this.bio, this.image, this.createdAt, null);
   }
 
   @Override
   public User updateDataConverter() {
-    return new User(this.id, this.username, this.email, this.password, this.bio, this.image, this.createdAt, this.updatedAt);
+    return new User(this.id, this.username, this.email, this.password, this.bio, this.image, this.createdAt, LocalDateTime.now());
   }
 
   @Override
@@ -41,4 +38,18 @@ public class UserDTO implements DTOFunc {
       this.updatedAt = LocalDateTime.now();
     }
   }
+
+  @Override
+  public String toString() {
+    return "User{id=" + id +
+      ", username='" + username + '\'' +
+      ", email='" + email + '\'' +
+      ", password='" + password + '\'' +
+      ", bio='" + bio + '\'' +
+      ", image='" + image + '\'' +
+      ", createdAt=" + createdAt +
+      ", updatedAt=" + updatedAt +
+      '}';
+  }
+
 }
