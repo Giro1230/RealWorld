@@ -1,6 +1,7 @@
 package io.realword.model.dto;
 
 import io.realword.model.entity.Article;
+import io.realword.model.entity.Comment;
 import io.realword.model.entity.Tag;
 import io.realword.model.entity.User;
 import lombok.*;
@@ -20,6 +21,7 @@ public class ArticleDTO implements DTOFunc{
   private String body;
   private User user;
   private List<Tag> tag = new ArrayList<>();
+  private List<Comment> comments = new ArrayList<>();
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 
@@ -29,13 +31,13 @@ public class ArticleDTO implements DTOFunc{
       this.id = 0L;
     }
     insertTime();
-    return new Article (this.id, this.title, this.body, this.user, this.tag, this.createdAt, null);
+    return new Article (this.id, this.title, this.body, this.user, this.tag, this.comments ,this.createdAt, null);
   }
 
   @Override
   public Article updateDataConverter () {
     insertTime();
-    return new Article(this.id, this.title, this.body, this.user, this.tag, this.createdAt, this.updatedAt);
+    return new Article(this.id, this.title, this.body, this.user, this.tag, this.comments, this.createdAt, this.updatedAt);
   }
 
   @Override

@@ -15,7 +15,7 @@ public class UserController {
 
   @PostMapping("/users")
   public void UserRegister(@RequestBody UserDTO user){
-    logger.info("Request Data = {}", user.toString());
+    logger.info("Request Data = {}", user);
 //    UserDTO returnData = "";
   }
 }

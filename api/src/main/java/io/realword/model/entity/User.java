@@ -1,5 +1,6 @@
 package io.realword.model.entity;
 
+import io.realword.model.dto.UserDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
@@ -8,11 +9,10 @@ import java.time.LocalDateTime;
 
 @Builder
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user")
+@Table
 public class User {
 
   @Id
@@ -44,4 +44,27 @@ public class User {
   @Comment("수정날짜")
   @Column
   private LocalDateTime updatedAt;
+
+  @PrePersist
+  protected void onCreate() {
+    this.createdAt = LocalDateTime.now();
+  }
+
+  @PreUpdate
+  protected void onUpdate() {
+    this.updatedAt = LocalDateTime.now();
+  }
+
+  public UserDTO toDTO() {
+    return UserDTO.builder()
+      .id(this.id)
+      .username(this.username)
+      .email(this.email)
+      .password(this.password)
+      .bio(this.bio)
+      .image(this.image)
+      .createdAt(this.createdAt)
+      .updatedAt(this.updatedAt)
+      .build();
+  }
 }

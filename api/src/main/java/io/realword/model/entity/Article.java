@@ -31,11 +31,14 @@ public class Article {
   private String body;
 
   @ManyToOne
-  @JoinColumn(name = "user", nullable = false)
+  @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
   @OneToMany(mappedBy = "article", fetch = FetchType.EAGER)
-  private List<Tag> tag = new ArrayList<>();
+  private List<Tag> tags = new ArrayList<>();
+
+  @OneToMany(mappedBy = "article", fetch = FetchType.EAGER)
+  private List<io.realword.model.entity.Comment> comments = new ArrayList<>();
 
   @Comment("생성날짜")
   @Column(nullable = false)
@@ -44,4 +47,14 @@ public class Article {
   @Comment("수정날짜")
   @Column
   private LocalDateTime updatedAt;
+
+  @PrePersist
+  protected void onCreate() {
+    this.createdAt = LocalDateTime.now();
+  }
+
+  @PreUpdate
+  protected void onUpdate() {
+    this.updatedAt = LocalDateTime.now();
+  }
 }

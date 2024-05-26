@@ -1,37 +1,38 @@
 package io.realword.model.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.Comment;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
+@Data
 @Builder
-@Getter
-@Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "tag")
-public class Tag {
+@Table(name = "comment")
+public class Comment {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(nullable = false)
-  private String tagName;
+  private String body;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "article_id",nullable = false)
-  private Article article;
-
-  @Comment("생성날짜")
-  @Column(nullable = false)
   private LocalDateTime createdAt;
 
-  @Comment("수정날짜")
-  @Column
   private LocalDateTime updatedAt;
+
+  @ManyToOne
+  @JoinColumn(name = "article_id")
+  private Article article;
+
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private User user;
 
   @PrePersist
   protected void onCreate() {
