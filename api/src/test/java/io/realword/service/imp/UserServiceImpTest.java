@@ -65,6 +65,11 @@ class UserServiceImpTest {
 
   @Test
   void getUserByEmail() {
+    // given
+
+    // when
+
+    // then
   }
 
   @Test
