@@ -34,5 +34,5 @@ spring:
 #    path: /swagger-ui.html
 
 jwt:
-  secret: your-secret-key
+  secret: realWorldByGiro
   expiration: 86400000 # 1 day in milliseconds

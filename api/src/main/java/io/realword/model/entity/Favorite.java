@@ -17,11 +17,11 @@ public class Favorite {
   private FavoriteId id;
 
   @ManyToOne
-  @MapsId("user_id")
+  @MapsId("userId")
   private User user;
 
   @ManyToOne
-  @MapsId("article_id")
+  @MapsId("articleId")
   private Article article;
 
   @Column

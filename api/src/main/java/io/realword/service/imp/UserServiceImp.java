@@ -1,12 +1,17 @@
 package io.realword.service.imp;
 
+import io.realword.jwt.Jwt;
 import io.realword.model.dto.UserDTO;
 import io.realword.model.entity.User;
 import io.realword.service.inf.CRUDInterface;
 import io.realword.service.repository.UserRepository;
-import org.slf4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,23 +21,38 @@ public class UserServiceImp implements CRUDInterface {
 
   private final Logger logger;
   private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
+  private final Jwt jwt;
 
   @Autowired
-  public UserServiceImp(UserRepository userRepository) {
+  public UserServiceImp(UserRepository userRepository, PasswordEncoder passwordEncoder, Jwt jwt) {
     this.logger = LoggerFactory.getLogger(UserServiceImp.class);
     this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
+    this.jwt = jwt;
   }
 
   @Override
   public Object save(Object data) {
     try {
       UserDTO userDTO = (UserDTO) data;
+      userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
       User userEntity = userDTO.insertDataConverter();
       userEntity = userRepository.save(userEntity);
       return userEntity.toDTO();
     } catch (Exception e) {
       logger.error("Failed to save user", e);
       throw new RuntimeException("Failed to save user", e);
+    }
+  }
+
+  public String login(UserDTO userDTO) {
+    Optional<User> data = userRepository.findByEmail(userDTO.getEmail());
+    User user = data.orElseThrow(() -> new RuntimeException("Invalid credentials"));
+    if (passwordEncoder.matches(userDTO.getPassword(), user.getPassword())) {
+      return jwt.generateToken(user);
+    } else {
+      throw new RuntimeException("Invalid credentials");
     }
   }
 

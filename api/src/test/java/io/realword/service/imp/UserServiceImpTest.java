@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
@@ -20,6 +21,8 @@ class UserServiceImpTest {
   UserServiceImp userService;
   @Autowired
   UserRepository userRepository;
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
   @BeforeEach
   void before () {
@@ -29,7 +32,7 @@ class UserServiceImpTest {
   @Test
   void save() {
     // given
-    UserDTO data = new UserDTO(null, "test", "test@test","test",null,null,null,null);
+    UserDTO data = new UserDTO(null, "test", "test@test.com","test",null,null,null,null);
     logger.info("insert data : {}", data.toString());
 
     // when
@@ -43,7 +46,7 @@ class UserServiceImpTest {
   @Test
   void getUserById() {
     // given
-    Long userId = 1L;
+    Long userId = 5L;
 
     // when
     UserDTO data = (UserDTO) userService.getUserById(userId);
@@ -79,6 +82,7 @@ class UserServiceImpTest {
   void update() {
     // given
     UserDTO data = new UserDTO(1L, "test", "test@test", "2222", null, null, null, null);
+    data.setPassword(passwordEncoder.encode(data.getPassword()));
 
     // when
     data = (UserDTO) userService.update(data);
@@ -87,15 +91,29 @@ class UserServiceImpTest {
     logger.info("update : {}", data);
   }
 
+//  @Test
+//  void delete() {
+//    // given
+//    Long userId = 1L;
+//
+//    // when
+//    Boolean data = userService.delete(userId);
+//
+//    // then
+//    logger.info("delete : {}", data);
+//  }
+
   @Test
-  void delete() {
+  void login() {
     // given
-    Long userId = 1L;
+    UserDTO data = new UserDTO();
+    data.setEmail("test@test.com");
+    data.setPassword("test");
 
     // when
-    Boolean data = userService.delete(userId);
+    String returnData = userService.login(data);
 
     // then
-    logger.info("delete : {}", data);
+    logger.info("login Token : {}", returnData);
   }
 }

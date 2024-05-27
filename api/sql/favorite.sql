@@ -1,8 +1,8 @@
 CREATE TABLE Favorite (
-  user_id INT,
-  article_id INT,
+  user_id BIGINT,
+  article_id BIGINT,
   created_at DATETIME NOT NULL,
-  PRIMARY KEY (userId, articleId),
-  FOREIGN KEY (userId) REFERENCES User(id),
-  FOREIGN KEY (articleId) REFERENCES Article(id)
+  PRIMARY KEY (user_id, article_id),
+  FOREIGN KEY (user_id) REFERENCES user(id),
+  FOREIGN KEY (article_id) REFERENCES article(id)
 );

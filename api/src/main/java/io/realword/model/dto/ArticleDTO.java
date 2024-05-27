@@ -18,6 +18,7 @@ import java.util.List;
 public class ArticleDTO implements DTOFunc{
   private Long id;
   private String title;
+  private String description;
   private String body;
   private User user;
   private List<Tag> tag = new ArrayList<>();
@@ -31,13 +32,13 @@ public class ArticleDTO implements DTOFunc{
       this.id = 0L;
     }
     insertTime();
-    return new Article (this.id, this.title, this.body, this.user, this.tag, this.comments ,this.createdAt, null);
+    return new Article (this.id, this.title, this.description,this.body, this.user, this.tag, this.comments ,this.createdAt, null);
   }
 
   @Override
   public Article updateDataConverter () {
     insertTime();
-    return new Article(this.id, this.title, this.body, this.user, this.tag, this.comments, this.createdAt, this.updatedAt);
+    return new Article(this.id, this.title, this.description, this.body, this.user, this.tag, this.comments, this.createdAt, this.updatedAt);
   }
 
   @Override
