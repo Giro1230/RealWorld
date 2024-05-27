@@ -66,17 +66,36 @@ class UserServiceImpTest {
   @Test
   void getUserByEmail() {
     // given
+    String email = "test@test";
 
     // when
+    UserDTO data = (UserDTO) userService.getUserByEmail(email);
 
     // then
+    logger.info("getUserByEmail : {}", data.toString());
   }
 
   @Test
   void update() {
+    // given
+    UserDTO data = new UserDTO(1L, "test", "test@test", "2222", null, null, null, null);
+
+    // when
+    data = (UserDTO) userService.update(data);
+
+    // then
+    logger.info("update : {}", data);
   }
 
   @Test
   void delete() {
+    // given
+    Long userId = 1L;
+
+    // when
+    Boolean data = userService.delete(userId);
+
+    // then
+    logger.info("delete : {}", data);
   }
 }

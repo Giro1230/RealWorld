@@ -6,6 +6,6 @@ CREATE TABLE user
   password VARCHAR(50) NOT NULL,
   bio VARCHAR(255),
   image VARCHAR(255),
-  createdAt DATETIME NOT NULL,
-  updatedAt DATETIME
+  created_at DATETIME NOT NULL,
+  updated_at DATETIME
 );

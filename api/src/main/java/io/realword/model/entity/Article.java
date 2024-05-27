@@ -26,6 +26,9 @@ public class Article {
   @Column
   private String tile;
 
+  @Column
+  private String description;
+
   @Comment("게시글")
   @Column
   private String body;
