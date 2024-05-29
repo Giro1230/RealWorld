@@ -1,5 +1,7 @@
 package io.realword.service.imp;
 
+import io.realword.controller.dto.req.ReqUser;
+import io.realword.controller.dto.res.ResUser;
 import io.realword.repository.UserRepository;
 import io.realword.service.UserServiceImp;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,15 +32,15 @@ class UserServiceImpTest {
   @Test
   void save() {
     // given
-    UserDTO data = new UserDTO(null, "test", "test@test.com","test",null,null,null,null);
+    ReqUser data = new ReqUser(null, "test", "test@test.com","test",null,null,null,null);
     logger.info("insert data : {}", data.toString());
 
     // when
-    data = (UserDTO) userService.save(data);
+    ResUser registerData = userService.register(data);
 
     // then
 
-    logger.info("user save return : {}", data.toString());
+    logger.info("user save return : {}", registerData.toString());
   }
 
   @Test
@@ -47,7 +49,7 @@ class UserServiceImpTest {
     Long userId = 5L;
 
     // when
-    UserDTO data = (UserDTO) userService.getUserById(userId);
+    ResUser data = userService.getUserById(userId);
 
     // then
     logger.info("getUserId : {}", data.toString());
@@ -58,7 +60,7 @@ class UserServiceImpTest {
     // given
 
     // when
-    List<Object> datas = userService.getUserList();
+    List<ResUser> datas = userService.getUserList();
 
     // then
     logger.info("getAllUser : {}", datas.toArray());
@@ -70,7 +72,7 @@ class UserServiceImpTest {
     String email = "test@test";
 
     // when
-    UserDTO data = (UserDTO) userService.getUserByEmail(email);
+    ResUser data = userService.getUserByEmail(email);
 
     // then
     logger.info("getUserByEmail : {}", data.toString());
@@ -79,14 +81,14 @@ class UserServiceImpTest {
   @Test
   void update() {
     // given
-    UserDTO data = new UserDTO(1L, "test", "test@test", "2222", null, null, null, null);
+    ReqUser data = new ReqUser(1L, "test", "test@test", "2222", null, null, null, null);
     data.setPassword(passwordEncoder.encode(data.getPassword()));
 
     // when
-    data = (UserDTO) userService.update(data);
+    ResUser updatedData = userService.update(data);
 
     // then
-    logger.info("update : {}", data);
+    logger.info("update : {}", updatedData);
   }
 
 //  @Test
@@ -104,9 +106,11 @@ class UserServiceImpTest {
   @Test
   void login() {
     // given
-    UserDTO data = new UserDTO();
-    data.setEmail("test@test.com");
-    data.setPassword("test");
+    ReqUser data = ReqUser.builder()
+      .email("test@test.com")
+      .password("test")
+      .build();
+
 
     // when
     String returnData = userService.login(data);
