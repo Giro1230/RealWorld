@@ -1,4 +1,4 @@
-package io.realword.model.entity;
+package io.realword.domain;
 
 import jakarta.persistence.*;
 import lombok.*;

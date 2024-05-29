@@ -1,4 +1,4 @@
-package io.realword.model.entity;
+package io.realword.domain;
 
 
 import jakarta.persistence.*;
@@ -41,7 +41,7 @@ public class Article {
   private List<Tag> tags = new ArrayList<>();
 
   @OneToMany(mappedBy = "article", fetch = FetchType.EAGER)
-  private List<io.realword.model.entity.Comment> comments = new ArrayList<>();
+  private List<io.realword.domain.Comment> comments = new ArrayList<>();
 
   @Comment("생성날짜")
   @Column(nullable = false)

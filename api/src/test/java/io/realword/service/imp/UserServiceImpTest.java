@@ -1,7 +1,7 @@
 package io.realword.service.imp;
 
-import io.realword.model.dto.UserDTO;
-import io.realword.service.repository.UserRepository;
+import io.realword.repository.UserRepository;
+import io.realword.service.UserServiceImp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.*;
@@ -10,8 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class UserServiceImpTest {

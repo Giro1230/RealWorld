@@ -1,10 +1,11 @@
-package io.realword.service.imp;
+package io.realword.service;
 
-import io.realword.jwt.Jwt;
-import io.realword.model.dto.UserDTO;
-import io.realword.model.entity.User;
-import io.realword.service.inf.CRUDInterface;
-import io.realword.service.repository.UserRepository;
+import io.realword.controller.dto.req.ReqUser;
+import io.realword.controller.dto.res.ResUser;
+import io.realword.security.jwt.Jwt;
+import io.realword.domain.User;
+import io.realword.repository.UserRepository;
+import io.realword.service.inf.UserInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImp implements CRUDInterface {
+public class UserServiceImp implements UserInterface {
 
   private final Logger logger;
   private final UserRepository userRepository;
@@ -33,23 +34,31 @@ public class UserServiceImp implements CRUDInterface {
   }
 
   @Override
-  public Object save(Object data) {
-    try {
-      UserDTO userDTO = (UserDTO) data;
-      userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-      User userEntity = userDTO.insertDataConverter();
+  public ResUser register(ReqUser data) {
+    try {;
+      data.setPassword(passwordEncoder.encode(data.getPassword()));
+      User userEntity = User.builder()
+        .id(null)
+        .username(data.getUsername())
+        .email(data.getEmail())
+        .password(data.getPassword())
+        .bio(data.getBio())
+        .image(data.getImage())
+        .createdAt(null)
+        .updatedAt(null)
+        .build();
       userEntity = userRepository.save(userEntity);
-      return userEntity.toDTO();
+      return userEntity.toRes();
     } catch (Exception e) {
       logger.error("Failed to save user", e);
       throw new RuntimeException("Failed to save user", e);
     }
   }
 
-  public String login(UserDTO userDTO) {
-    Optional<User> data = userRepository.findByEmail(userDTO.getEmail());
-    User user = data.orElseThrow(() -> new RuntimeException("Invalid credentials"));
-    if (passwordEncoder.matches(userDTO.getPassword(), user.getPassword())) {
+  public String login(ReqUser data) {
+    Optional<User> optionalUser = userRepository.findByEmail(data.getEmail());
+    User user = optionalUser.orElseThrow(() -> new RuntimeException("Invalid credentials"));
+    if (passwordEncoder.matches(data.getPassword(), user.getPassword())) {
       return jwt.generateToken(user);
     } else {
       throw new RuntimeException("Invalid credentials");
@@ -57,11 +66,11 @@ public class UserServiceImp implements CRUDInterface {
   }
 
   @Override
-  public Object getUserById(Long userId) {
+  public ResUser getUserById(Long userId) {
     try {
       User userEntity = userRepository.findById(userId)
         .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-      return userEntity.toDTO();
+      return userEntity.toRes();
     } catch (Exception e) {
       logger.error("Failed to get user by id: {}", userId, e);
       throw new RuntimeException("Failed to get user by id: " + userId, e);
@@ -69,11 +78,11 @@ public class UserServiceImp implements CRUDInterface {
   }
 
   @Override
-  public List<Object> getUserList() {
+  public List<ResUser> getUserList() {
     try {
       List<User> usersEntity = userRepository.findAll();
       return usersEntity.stream()
-        .map(User::toDTO)
+        .map(User::toRes)
         .collect(Collectors.toList());
     } catch (Exception e) {
       logger.error("Failed to get user list", e);
@@ -81,11 +90,12 @@ public class UserServiceImp implements CRUDInterface {
     }
   }
 
-  public Object getUserByEmail(String userEmail) {
+  @Override
+  public ResUser getUserByEmail(String userEmail) {
     try {
       User userEntity = userRepository.findByEmail(userEmail)
         .orElseThrow(() -> new RuntimeException("User not found with email: " + userEmail));
-      return userEntity.toDTO();
+      return userEntity.toRes();
     } catch (Exception e) {
       logger.error("Failed to get user by email: " + userEmail, e);
       throw new RuntimeException("Failed to get user by email: " + userEmail, e);
@@ -93,13 +103,22 @@ public class UserServiceImp implements CRUDInterface {
   }
 
   @Override
-  public Object update(Object data) {
+  public ResUser update(ReqUser data) {
     try {
-      UserDTO userDTO = (UserDTO) data;
-      User userEntity = ((UserDTO) data).updateDataConverter();
+
+      User userEntity = User.builder()
+        .id(data.getId())
+        .username(data.getUsername())
+        .email(data.getEmail())
+        .password(data.getPassword())
+        .bio(data.getBio())
+        .image(data.getImage())
+        .createdAt(data.getCreatedAt())
+        .updatedAt(null)
+        .build();
 
       userEntity = userRepository.save(userEntity);
-      return userEntity.toDTO();
+      return userEntity.toRes();
     } catch (Exception e) {
       logger.error("Failed to update user", e);
       throw new RuntimeException("Failed to update user", e);

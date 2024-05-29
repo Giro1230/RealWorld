@@ -1,8 +1,11 @@
-package io.realword.model.entity;
+package io.realword.domain;
 
-import io.realword.model.dto.UserDTO;
+import io.realword.controller.dto.res.ResUser;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 
 import java.time.LocalDateTime;
@@ -55,8 +58,8 @@ public class User {
     this.updatedAt = LocalDateTime.now();
   }
 
-  public UserDTO toDTO() {
-    return UserDTO.builder()
+  public ResUser toRes() {
+    return ResUser.builder()
       .id(this.id)
       .username(this.username)
       .email(this.email)

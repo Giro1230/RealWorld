@@ -1,7 +1,10 @@
-package io.realword.model.entity;
+package io.realword.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -25,10 +28,10 @@ public class Favorite {
   private Article article;
 
   @Column
-  private LocalDateTime created_at;
+  private LocalDateTime createdAt;
 
   @PrePersist
   public void onCreatedAt(){
-    this.created_at = LocalDateTime.now();
+    this.createdAt = LocalDateTime.now();
   }
 }

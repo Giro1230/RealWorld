@@ -1,8 +1,9 @@
 package io.realword.controller;
 
-import io.realword.jwt.Jwt;
-import io.realword.model.dto.UserDTO;
-import io.realword.service.imp.UserServiceImp;
+import io.realword.controller.dto.req.ReqUser;
+import io.realword.controller.dto.res.ResUser;
+import io.realword.security.jwt.Jwt;
+import io.realword.service.UserServiceImp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +27,10 @@ public class UserController {
   }
 
   @PostMapping("/users")
-  public ResponseEntity<UserDTO> userRegister(@RequestBody UserDTO user) {
+  public ResponseEntity<ResUser> userRegister(@RequestBody ReqUser user) {
     try {
-      logger.info("'/users' Request  Data = {}", user);
-      UserDTO savedUser = (UserDTO) userService.save(user);
+      logger.info("'/users' Request  Data = {}");
+      ResUser savedUser = userService.register(user);
       logger.info("'/users' Response  Data = {}", savedUser);
       return ResponseEntity.ok(savedUser);
     } catch (Exception e) {
@@ -39,7 +40,7 @@ public class UserController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<String> login(UserDTO user) {
+  public ResponseEntity<String> login(ReqUser user) {
     try {
       logger.info("'/login' Request Data = {}", user);
       String token = userService.login(user);

@@ -1,6 +1,6 @@
-package io.realword.service.repository;
+package io.realword.repository;
 
-import io.realword.model.entity.Article;
+import io.realword.domain.entity.Article;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
