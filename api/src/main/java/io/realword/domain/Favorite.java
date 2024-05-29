@@ -16,18 +16,17 @@ import java.time.LocalDateTime;
 @Table
 public class Favorite {
 
-  @EmbeddedId
-  private FavoriteId id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-  @ManyToOne
-  @MapsId("userId")
+  @ManyToOne(fetch = FetchType.LAZY)
   private User user;
 
-  @ManyToOne
-  @MapsId("articleId")
+  @ManyToOne(fetch = FetchType.LAZY)
   private Article article;
 
-  @Column
+  @Column(nullable = false)
   private LocalDateTime createdAt;
 
   @PrePersist

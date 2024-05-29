@@ -37,10 +37,10 @@ public class Article {
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
-  @OneToMany(mappedBy = "article", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "article", fetch = FetchType.LAZY)
   private List<Tag> tags = new ArrayList<>();
 
-  @OneToMany(mappedBy = "article", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY)
   private List<io.realword.domain.Comment> comments = new ArrayList<>();
 
   @Comment("생성날짜")

@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
@@ -39,7 +39,7 @@ public class UserController {
     }
   }
 
-  @PostMapping("/login")
+  @PostMapping("/users/login")
   public ResponseEntity<String> login(ReqUser user) {
     try {
       logger.info("'/login' Request Data = {}", user);
@@ -49,6 +49,26 @@ public class UserController {
     } catch (Exception e) {
       logger.error("Failed to login user", e);
       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+  }
+
+  @GetMapping("/user")
+  public ResponseEntity<ResUser> getCurrentUser() {
+    try {
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      String email = authentication.getName();
+      return ResponseEntity.ok(userService.getUserByEmail(email));
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+  }
+
+  @PutMapping("/user")
+  public ResponseEntity<ResUser> updateUser(ReqUser user) {
+    try {
+      return ResponseEntity.ok(userService.update(user));
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
   }
 }
