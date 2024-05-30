@@ -1,5 +1,6 @@
 package io.realword.domain;
 
+import io.realword.controller.dto.res.ResComment;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,5 +42,15 @@ public class Comment {
   @PreUpdate
   protected void onUpdate() {
     this.updatedAt = LocalDateTime.now();
+  }
+
+  public ResComment toRes(){
+    return ResComment.builder()
+      .id(this.id)
+      .body(this.body)
+      .userName(this.user.getUsername())
+      .createdAt(this.createdAt)
+      .updatedAt(this.updatedAt)
+      .build();
   }
 }

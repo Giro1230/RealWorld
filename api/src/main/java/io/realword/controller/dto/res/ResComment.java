@@ -3,22 +3,16 @@ package io.realword.controller.dto.res;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ResArticle {
+public class ResComment {
   private Long id;
-  private String tile;
-  private String description;
   private String body;
   private String userName;
-  private List<String> tags = new ArrayList<>();
-  private List<ResComment> comments = new ArrayList<>();
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 }

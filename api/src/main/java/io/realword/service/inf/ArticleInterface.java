@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ArticleInterface {
   List<ResArticle> getAllArticle();
-  List<ResArticle> getArticleByUser();
-  List<ResArticle> getArticleByFavorite();
-  List<ResArticle> getArticleByTag();
+  List<ResArticle> getArticlesByAuthor(String name);
+  List<ResArticle> getArticlesByFavorited(String name);
+  List<ResArticle> getArticlesByTag(String tag);
 }

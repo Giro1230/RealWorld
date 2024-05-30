@@ -1,6 +1,8 @@
 package io.realword.domain;
 
 
+import io.realword.controller.dto.res.ResArticle;
+import io.realword.controller.dto.res.ResComment;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
@@ -8,6 +10,7 @@ import org.hibernate.annotations.Comment;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Builder
 @Getter
@@ -59,5 +62,22 @@ public class Article {
   @PreUpdate
   protected void onUpdate() {
     this.updatedAt = LocalDateTime.now();
+  }
+
+  public ResArticle toRes(){
+    List<String> tags = this.tags.stream().map(Tag::getTagName).toList();
+    List<ResComment> comments = this.comments.stream().map(io.realword.domain.Comment::toRes).toList();
+
+    return ResArticle.builder()
+      .id(this.id)
+      .description(this.description)
+      .tile(this.tile)
+      .body(this.body)
+      .userName(this.user.getUsername())
+      .tags(tags)
+      .comments(comments)
+      .createdAt(this.createdAt)
+      .updatedAt(this.updatedAt)
+      .build();
   }
 }
