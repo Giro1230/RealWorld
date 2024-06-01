@@ -1,7 +1,6 @@
 package io.realword.controller;
 
-import io.realword.controller.dto.res.ResArticle;
-import io.realword.controller.dto.res.ResUser;
+import io.realword.domain.Article;
 import io.realword.security.jwt.Jwt;
 import io.realword.service.ArticleServiceImp;
 import org.slf4j.Logger;
@@ -9,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,6 +40,22 @@ public class ArticleController {
       } else {
         return ResponseEntity.ok(articleService.getAllArticle());
       }
+    } catch (Exception e) {
+      logger.error("Error fetching articles", e);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+  }
+
+  @PostMapping("/articles")
+  public ResponseEntity<Article> crestedArticle(@RequestBody ReqArticle data){
+    try {
+      return ResponseEntity.ok(articleService.createdArticle(Article
+        .builder()
+        .tile(data.getTile())
+          .description(data.getDescription())
+          .body(data.getBody())
+        .build()
+      ));
     } catch (Exception e) {
       logger.error("Error fetching articles", e);
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

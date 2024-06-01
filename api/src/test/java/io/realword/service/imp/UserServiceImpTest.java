@@ -1,7 +1,7 @@
 package io.realword.service.imp;
 
-import io.realword.controller.dto.req.ReqUser;
-import io.realword.controller.dto.res.ResUser;
+import io.realword.controller.dto.req.user.RegisterUserReq;
+import io.realword.controller.dto.res.user.RegisterUserRes;
 import io.realword.repository.UserRepository;
 import io.realword.service.UserServiceImp;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,14 +32,18 @@ class UserServiceImpTest {
   @Test
   void save() {
     // given
-    ReqUser data = new ReqUser(null, "test", "test@test.com","test",null,null,null,null);
+    RegisterUserReq data = RegisterUserReq
+      .builder()
+      .username("test")
+      .email("test@test.com")
+      .password("test")
+      .build();
     logger.info("insert data : {}", data.toString());
 
     // when
-    ResUser registerData = userService.register(data);
+    RegisterUserRes registerData = userService.register(data);
 
     // then
-
     logger.info("user save return : {}", registerData.toString());
   }
 

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 @Component
 public class Jwt {
 
-  private final Key key;
+  private final Key key; // ?
   private final SecretKey secretKey;
   private final long expirationTime;
 
@@ -37,26 +38,29 @@ public class Jwt {
       .setSubject(user.getEmail())
       .setIssuedAt(now)
       .setExpiration(expiryDate)
-      .signWith(key, SignatureAlgorithm.HS512)
+      .signWith(secretKey, SignatureAlgorithm.HS512)
       .compact();
   }
 
   public Claims parseToken(String token) {
     return Jwts.parserBuilder()
-      .setSigningKey(key)
+      .setSigningKey(secretKey)
       .build()
       .parseClaimsJws(token)
       .getBody();
   }
 
   public boolean validateToken(String token) {
+    System.out.println("ete");
     try {
       Jws<Claims> claims = Jwts.parserBuilder()
         .setSigningKey(secretKey)
         .build()
         .parseClaimsJws(token);
+      System.out.println("claims.getBody() = " + claims.getBody());
       return !claims.getBody().getExpiration().before(new Date());
     } catch (Exception e) {
+      System.out.println(e);
       return false;
     }
   }
@@ -65,13 +69,15 @@ public class Jwt {
     Claims claims = parseToken(token);
 
     String username = claims.getSubject();
-    List<String> roles = claims.get("roles", List.class);
+    // roles를 가져오되, null이거나 비어있으면 빈 리스트를 사용
+    List<String> roles = new ArrayList<>();
 
     List<SimpleGrantedAuthority> authorities = roles.stream()
       .map(SimpleGrantedAuthority::new)
       .collect(Collectors.toList());
 
     UserDetails userDetails = new org.springframework.security.core.userdetails.User(username, "", authorities);
+    System.out.println("username = " + username);
 
     return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
   }

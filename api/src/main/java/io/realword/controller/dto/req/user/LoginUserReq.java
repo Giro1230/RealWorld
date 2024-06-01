@@ -1,0 +1,13 @@
+package io.realword.controller.dto.req.user;
+
+import lombok.*;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class LoginUserReq {
+  private String email;
+  private String password;
+}

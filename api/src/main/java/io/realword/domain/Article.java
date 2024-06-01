@@ -1,8 +1,6 @@
 package io.realword.domain;
 
 
-import io.realword.controller.dto.res.ResArticle;
-import io.realword.controller.dto.res.ResComment;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
@@ -10,15 +8,13 @@ import org.hibernate.annotations.Comment;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Builder
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "article")
+@Table
 public class Article {
 
   @Id
@@ -26,24 +22,26 @@ public class Article {
   private Long id;
 
   @Comment("게시물 제목")
-  @Column
   private String tile;
 
-  @Column
+  @Comment("부제목")
   private String description;
 
   @Comment("게시글")
-  @Column
+  @Column(columnDefinition = "MEDIUMTEXT")
   private String body;
 
+  @Comment("글쓴이")
   @ManyToOne
-  @JoinColumn(name = "user_id", nullable = false)
+  @JoinColumn(nullable = false)
   private User user;
 
+  @Comment("태그")
   @OneToMany(mappedBy = "article", fetch = FetchType.LAZY)
   private List<Tag> tags = new ArrayList<>();
 
-  @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY)
+  @Comment("댓글")
+  @OneToMany(mappedBy = "article", fetch = FetchType.LAZY)
   private List<io.realword.domain.Comment> comments = new ArrayList<>();
 
   @Comment("생성날짜")
@@ -51,7 +49,6 @@ public class Article {
   private LocalDateTime createdAt;
 
   @Comment("수정날짜")
-  @Column
   private LocalDateTime updatedAt;
 
   @PrePersist
@@ -62,22 +59,5 @@ public class Article {
   @PreUpdate
   protected void onUpdate() {
     this.updatedAt = LocalDateTime.now();
-  }
-
-  public ResArticle toRes(){
-    List<String> tags = this.tags.stream().map(Tag::getTagName).toList();
-    List<ResComment> comments = this.comments.stream().map(io.realword.domain.Comment::toRes).toList();
-
-    return ResArticle.builder()
-      .id(this.id)
-      .description(this.description)
-      .tile(this.tile)
-      .body(this.body)
-      .userName(this.user.getUsername())
-      .tags(tags)
-      .comments(comments)
-      .createdAt(this.createdAt)
-      .updatedAt(this.updatedAt)
-      .build();
   }
 }

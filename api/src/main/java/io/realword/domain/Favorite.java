@@ -20,12 +20,15 @@ public class Favorite {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @org.hibernate.annotations.Comment("유저 정보")
   @ManyToOne(fetch = FetchType.LAZY)
   private User user;
 
+  @org.hibernate.annotations.Comment("게시물 정보")
   @ManyToOne(fetch = FetchType.LAZY)
   private Article article;
 
+  @org.hibernate.annotations.Comment("생정 날짜")
   @Column(nullable = false)
   private LocalDateTime createdAt;
 

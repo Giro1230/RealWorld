@@ -1,7 +1,8 @@
 package io.realword.controller;
 
-import io.realword.controller.dto.req.ReqUser;
-import io.realword.controller.dto.res.ResUser;
+import io.realword.controller.dto.req.user.CurrentUserReq;
+import io.realword.controller.dto.req.user.UpdateUserReq;
+import io.realword.controller.dto.res.user.CurrentUserRes;
 import io.realword.security.jwt.Jwt;
 import io.realword.service.UserServiceImp;
 import org.slf4j.Logger;
@@ -9,11 +10,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
   private final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -26,47 +27,25 @@ public class UserController {
     this.jwt = jwt;
   }
 
-  @PostMapping("/users")
-  public ResponseEntity<ResUser> userRegister(@RequestBody ReqUser user) {
+  @GetMapping
+  public ResponseEntity<CurrentUserRes> getCurrentUser(@AuthenticationPrincipal CurrentUserReq user) {
     try {
-      logger.info("'/users' Request  Data = {}");
-      ResUser savedUser = userService.register(user);
-      logger.info("'/users' Response  Data = {}", savedUser);
-      return ResponseEntity.ok(savedUser);
-    } catch (Exception e) {
-      logger.error("Failed to register user", e);
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
-  }
+      logger.info("Get '/user' Request Data = {}", user);
 
-  @PostMapping("/users/login")
-  public ResponseEntity<String> login(ReqUser user) {
-    try {
-      logger.info("'/login' Request Data = {}", user);
-      String token = userService.login(user);
-      logger.info("'/login' Response Token = {}", token);
-      return ResponseEntity.ok(token);
-    } catch (Exception e) {
-      logger.error("Failed to login user", e);
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    }
-  }
+      CurrentUserRes returnData = userService.getUserByEmail(user);
+      logger.info("Get '/user' Responses Data = {}", user);
 
-  @GetMapping("/user")
-  public ResponseEntity<ResUser> getCurrentUser() {
-    try {
-      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-      String email = authentication.getName();
-      return ResponseEntity.ok(userService.getUserByEmail(email));
+      return ResponseEntity.ok(returnData);
     } catch (Exception e) {
+      logger.error("Fail to current user", e);
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
   }
 
-  @PutMapping("/user")
-  public ResponseEntity<ResUser> updateUser(ReqUser user) {
+  @PutMapping
+  public ResponseEntity<ResUser> updateUser(@AuthenticationPrincipal String email, @RequestBody UpdateUserReq user) {
     try {
-      return ResponseEntity.ok(userService.update(user));
+      return ResponseEntity.ok(userService.update(email, user));
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }

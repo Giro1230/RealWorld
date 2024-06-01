@@ -1,6 +1,5 @@
 package io.realword.service;
 
-import io.realword.controller.dto.res.ResArticle;
 import io.realword.domain.Article;
 import io.realword.repository.ArticleRepository;
 import io.realword.service.inf.ArticleInterface;
@@ -58,5 +57,15 @@ public class ArticleServiceImp implements ArticleInterface {
   @Override
   public List<ResArticle> getArticlesByTag(String tag) {
     return List.of();
+  }
+
+  @Override
+  public Article createdArticle(Article a) {
+    try {
+      return articleRepository.save(a);
+    } catch (Exception e) {
+      logger.error("Failed to create article", e);
+      throw new RuntimeException("Failed to create article", e);
+    }
   }
 }

@@ -1,12 +1,11 @@
 package io.realword.service.inf;
 
-import io.realword.controller.dto.res.ResArticle;
-
 import java.util.List;
 
 public interface ArticleInterface {
-  List<ResArticle> getAllArticle();
-  List<ResArticle> getArticlesByAuthor(String name);
-  List<ResArticle> getArticlesByFavorited(String name);
-  List<ResArticle> getArticlesByTag(String tag);
+  List<ArticleVO> getAllArticle();
+  List<ArticleVO> getArticlesByAuthor(ArticleVO name);
+  List<ArticleVO> getArticlesByFavorited(ArticleVO name);
+  List<ArticleVO> getArticlesByTag(ArticleVO tag);
+  ArticleVO createdArticle(ArticleVO a);
 }

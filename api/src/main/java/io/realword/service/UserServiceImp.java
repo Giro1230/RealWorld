@@ -1,7 +1,13 @@
 package io.realword.service;
 
-import io.realword.controller.dto.req.ReqUser;
-import io.realword.controller.dto.res.ResUser;
+import io.realword.controller.dto.req.user.CurrentUserReq;
+import io.realword.controller.dto.req.user.LoginUserReq;
+import io.realword.controller.dto.req.user.RegisterUserReq;
+import io.realword.controller.dto.req.user.UpdateUserReq;
+import io.realword.controller.dto.res.user.CurrentUserRes;
+import io.realword.controller.dto.res.user.LoginUserRes;
+import io.realword.controller.dto.res.user.RegisterUserRes;
+import io.realword.controller.dto.res.user.UpdatedUserRes;
 import io.realword.security.jwt.Jwt;
 import io.realword.domain.User;
 import io.realword.repository.UserRepository;
@@ -34,105 +40,111 @@ public class UserServiceImp implements UserInterface {
   }
 
   @Override
-  public ResUser register(ReqUser data) {
-    try {;
+  public RegisterUserRes register(RegisterUserReq data) {
+    try {
+      // password encode
       data.setPassword(passwordEncoder.encode(data.getPassword()));
-      User userEntity = User.builder()
-        .id(null)
+      logger.info("user password encoded : {}", data.getPassword());
+
+      // RegisterUserReq -> User
+      User userData = User
+        .builder()
         .username(data.getUsername())
         .email(data.getEmail())
         .password(data.getPassword())
-        .bio(data.getBio())
-        .image(data.getImage())
-        .createdAt(null)
-        .updatedAt(null)
         .build();
-      userEntity = userRepository.save(userEntity);
-      return userEntity.toRes();
+
+      // User -> RegisterUserRes
+      return RegisterUserRes
+        .builder()
+        .username(userData.getUsername())
+        .email(userData.getEmail())
+        .bio(userData.getBio())
+        .image(userData.getImage())
+        .token(jwt.generateToken(userData))
+        .build();
+
     } catch (Exception e) {
       logger.error("Failed to save user", e);
       throw new RuntimeException("Failed to save user", e);
     }
   }
 
-  public String login(ReqUser data) {
+  @Override
+  public LoginUserRes login(LoginUserReq data) {
+    // getUserEmail
     Optional<User> optionalUser = userRepository.findByEmail(data.getEmail());
+
+    // Optional -> User
     User user = optionalUser.orElseThrow(() -> new RuntimeException("Invalid credentials"));
+
+    // password checked
     if (passwordEncoder.matches(data.getPassword(), user.getPassword())) {
-      return jwt.generateToken(user);
-    } else {
-      throw new RuntimeException("Invalid credentials");
-    }
-  }
 
-  @Override
-  public ResUser getUserById(Long userId) {
-    try {
-      User userEntity = userRepository.findById(userId)
-        .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-      return userEntity.toRes();
-    } catch (Exception e) {
-      logger.error("Failed to get user by id: {}", userId, e);
-      throw new RuntimeException("Failed to get user by id: " + userId, e);
-    }
-  }
-
-  @Override
-  public List<ResUser> getUserList() {
-    try {
-      List<User> usersEntity = userRepository.findAll();
-      return usersEntity.stream()
-        .map(User::toRes)
-        .collect(Collectors.toList());
-    } catch (Exception e) {
-      logger.error("Failed to get user list", e);
-      throw new RuntimeException("Failed to get user list", e);
-    }
-  }
-
-  @Override
-  public ResUser getUserByEmail(String userEmail) {
-    try {
-      User userEntity = userRepository.findByEmail(userEmail)
-        .orElseThrow(() -> new RuntimeException("User not found with email: " + userEmail));
-      return userEntity.toRes();
-    } catch (Exception e) {
-      logger.error("Failed to get user by email: " + userEmail, e);
-      throw new RuntimeException("Failed to get user by email: " + userEmail, e);
-    }
-  }
-
-  @Override
-  public ResUser update(ReqUser data) {
-    try {
-
-      User userEntity = User.builder()
-        .id(data.getId())
-        .username(data.getUsername())
-        .email(data.getEmail())
-        .password(data.getPassword())
-        .bio(data.getBio())
-        .image(data.getImage())
-        .createdAt(data.getCreatedAt())
-        .updatedAt(null)
+      // User -> LoginUserRes
+      return LoginUserRes.builder()
+        .username(user.getUsername())
+        .email(user.getEmail())
+        .bio(user.getBio())
+        .image(user.getImage())
+        .token(jwt.generateToken(user))
         .build();
+    } else {
+      logger.error("Failed to login user");
+      throw new RuntimeException("Failed to login user");
+    }
+  }
 
-      userEntity = userRepository.save(userEntity);
-      return userEntity.toRes();
+  @Override
+  public CurrentUserRes getCurrentUser(CurrentUserReq data) {
+    try {
+      // findUserByEmail
+      User user = getUserByEmail(data.getEmail());
+
+      // User -> CurrentUserRes
+      return CurrentUserRes.builder()
+        .username(user.getUsername())
+        .email(user.getEmail())
+        .bio(user.getBio())
+        .image(user.getImage())
+        .token(jwt.generateToken(user))
+        .build();
+    } catch (Exception e) {
+      logger.error("Failed to find user", e);
+      throw new RuntimeException("Failed to find user", e);
+    }
+  }
+
+  @Override
+  public UpdatedUserRes update(String email, UpdateUserReq data) {
+    try {
+      // findUserByEmail
+      User user = getUserByEmail(email);
+
+      // updatedUser
+      user.updated(data);
+
+      // User -> UpdatedUserRes
+      return UpdatedUserRes.builder()
+        .username(user.getUsername())
+        .email(user.getEmail())
+        .bio(user.getBio())
+        .image(user.getImage())
+        .token(jwt.generateToken(user))
+        .build();
     } catch (Exception e) {
       logger.error("Failed to update user", e);
       throw new RuntimeException("Failed to update user", e);
     }
   }
 
-  @Override
-  public Boolean delete(Long userId) {
+  public User getUserByEmail(String userEmail) {
     try {
-      userRepository.deleteById(userId);
-      return true;
+      return userRepository.findByEmail(userEmail)
+        .orElseThrow(() -> new RuntimeException("User not found with email: " + userEmail));
     } catch (Exception e) {
-      logger.error("Failed to delete user with id: " + userId, e);
-      return false;
+      logger.error("Failed to get user by email: " + userEmail, e);
+      throw new RuntimeException("Failed to get user by email: " + userEmail, e);
     }
   }
 }

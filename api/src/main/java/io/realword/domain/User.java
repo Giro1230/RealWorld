@@ -1,6 +1,6 @@
 package io.realword.domain;
 
-import io.realword.controller.dto.res.ResUser;
+import io.realword.controller.dto.req.user.UpdateUserReq;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="user")
+@Table
 public class User {
 
   @Id
@@ -23,29 +23,26 @@ public class User {
   private Long id;
 
   @Comment("유저 이름")
-  @Column(nullable = false)
+  @Column(length = 20, nullable = false)
   private String username;
 
   @Comment("유저 이메일")
-  @Column(nullable = false, unique = true)
+  @Column(length = 50, nullable = false, unique = true)
   private String email;
 
   @Comment("비밀번호")
   @Column(nullable = false)
   private String password;
 
-  @Column
   private String bio;
 
-  @Column
   private String image;
 
   @Comment("생성날짜")
-  @Column(name = "", nullable = false)
+  @Column(nullable = false)
   private LocalDateTime createdAt;
 
   @Comment("수정날짜")
-  @Column
   private LocalDateTime updatedAt;
 
   @PrePersist
@@ -56,19 +53,6 @@ public class User {
   @PreUpdate
   protected void onUpdate() {
     this.updatedAt = LocalDateTime.now();
-  }
-
-  public ResUser toRes() {
-    return ResUser.builder()
-      .id(this.id)
-      .username(this.username)
-      .email(this.email)
-      .password(this.password)
-      .bio(this.bio)
-      .image(this.image)
-      .createdAt(this.createdAt)
-      .updatedAt(this.updatedAt)
-      .build();
   }
 
   @Override
@@ -82,6 +66,10 @@ public class User {
       ", createdAt=" + createdAt +
       ", updatedAt=" + updatedAt +
       '}';
+  }
+
+  public void updated(UpdateUserReq data){
+    this.email = data.getEmail();
   }
 
 }

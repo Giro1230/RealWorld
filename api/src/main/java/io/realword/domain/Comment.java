@@ -1,6 +1,5 @@
 package io.realword.domain;
 
-import io.realword.controller.dto.res.ResComment;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,16 +13,19 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "comment")
+@Table
 public class Comment {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @org.hibernate.annotations.Comment("내용")
   private String body;
 
+  @org.hibernate.annotations.Comment("생성날짜")
   private LocalDateTime createdAt;
 
+  @org.hibernate.annotations.Comment("수정날짜")
   private LocalDateTime updatedAt;
 
   @ManyToOne
@@ -42,15 +44,5 @@ public class Comment {
   @PreUpdate
   protected void onUpdate() {
     this.updatedAt = LocalDateTime.now();
-  }
-
-  public ResComment toRes(){
-    return ResComment.builder()
-      .id(this.id)
-      .body(this.body)
-      .userName(this.user.getUsername())
-      .createdAt(this.createdAt)
-      .updatedAt(this.updatedAt)
-      .build();
   }
 }
