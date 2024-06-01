@@ -28,10 +28,12 @@ public class Comment {
   @org.hibernate.annotations.Comment("수정날짜")
   private LocalDateTime updatedAt;
 
+  @org.hibernate.annotations.Comment("게시글")
   @ManyToOne
   @JoinColumn(name = "article_id")
   private Article article;
 
+  @org.hibernate.annotations.Comment("글쓴이")
   @ManyToOne
   @JoinColumn(name = "user_id")
   private User user;

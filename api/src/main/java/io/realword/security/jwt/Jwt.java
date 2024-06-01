@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
 @Component
 public class Jwt {
 
-  private final Key key; // ?
+//  private final Key key;
   private final SecretKey secretKey;
   private final long expirationTime;
 
   public Jwt(@Value("${jwt.secret}") String secretKey, @Value("${jwt.expiration}") long expirationTime) {
-    this.key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+//    this.key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
     this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes());
     this.expirationTime = expirationTime;
   }
@@ -51,16 +51,13 @@ public class Jwt {
   }
 
   public boolean validateToken(String token) {
-    System.out.println("ete");
     try {
       Jws<Claims> claims = Jwts.parserBuilder()
         .setSigningKey(secretKey)
         .build()
         .parseClaimsJws(token);
-      System.out.println("claims.getBody() = " + claims.getBody());
       return !claims.getBody().getExpiration().before(new Date());
     } catch (Exception e) {
-      System.out.println(e);
       return false;
     }
   }
@@ -77,7 +74,6 @@ public class Jwt {
       .collect(Collectors.toList());
 
     UserDetails userDetails = new org.springframework.security.core.userdetails.User(username, "", authorities);
-    System.out.println("username = " + username);
 
     return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
   }

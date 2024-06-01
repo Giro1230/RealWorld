@@ -89,6 +89,7 @@ public class UserServiceImp implements UserInterface {
         .image(user.getImage())
         .token(jwt.generateToken(user))
         .build();
+
     } else {
       logger.error("Failed to login user");
       throw new RuntimeException("Failed to login user");
@@ -109,7 +110,9 @@ public class UserServiceImp implements UserInterface {
         .image(user.getImage())
         .token(jwt.generateToken(user))
         .build();
+
     } catch (Exception e) {
+
       logger.error("Failed to find user", e);
       throw new RuntimeException("Failed to find user", e);
     }
@@ -140,9 +143,11 @@ public class UserServiceImp implements UserInterface {
 
   public User getUserByEmail(String userEmail) {
     try {
+
       return userRepository.findByEmail(userEmail)
         .orElseThrow(() -> new RuntimeException("User not found with email: " + userEmail));
     } catch (Exception e) {
+
       logger.error("Failed to get user by email: " + userEmail, e);
       throw new RuntimeException("Failed to get user by email: " + userEmail, e);
     }

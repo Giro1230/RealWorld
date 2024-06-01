@@ -20,6 +20,7 @@ public class Tag {
   @Column(nullable = false)
   private String tagName;
 
+  @Comment("게시글")
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "article_id",nullable = false)
   private Article article;

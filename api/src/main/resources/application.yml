@@ -37,5 +37,5 @@ spring:
 #    path: /swagger-ui.html
 
 jwt:
-  secret: realWorldByGiro123456789qwerasdf
+  secret: realWorldByGiro123456789qwerasdfrealWorldByGiro123456789qwerasdf
   expiration: 86400000

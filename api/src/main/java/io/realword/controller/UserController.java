@@ -3,6 +3,7 @@ package io.realword.controller;
 import io.realword.controller.dto.req.user.CurrentUserReq;
 import io.realword.controller.dto.req.user.UpdateUserReq;
 import io.realword.controller.dto.res.user.CurrentUserRes;
+import io.realword.controller.dto.res.user.UpdatedUserRes;
 import io.realword.security.jwt.Jwt;
 import io.realword.service.UserServiceImp;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ public class UserController {
     try {
       logger.info("Get '/user' Request Data = {}", user);
 
-      CurrentUserRes returnData = userService.getUserByEmail(user);
+      CurrentUserRes returnData = userService.getCurrentUser(user);
       logger.info("Get '/user' Responses Data = {}", user);
 
       return ResponseEntity.ok(returnData);
@@ -43,10 +44,16 @@ public class UserController {
   }
 
   @PutMapping
-  public ResponseEntity<ResUser> updateUser(@AuthenticationPrincipal String email, @RequestBody UpdateUserReq user) {
+  public ResponseEntity<UpdatedUserRes> updateUser(@AuthenticationPrincipal String email, @RequestBody UpdateUserReq user) {
     try {
-      return ResponseEntity.ok(userService.update(email, user));
+      logger.info("Put '/user' Request Data = {}, {}", email, user);
+
+      UpdatedUserRes returnData = userService.update(email, user);
+      logger.info("Put '/user' Responses Data = {}", returnData);
+
+      return ResponseEntity.ok(returnData);
     } catch (Exception e) {
+      logger.error("Fail to update user", e);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
   }

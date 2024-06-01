@@ -34,8 +34,10 @@ public class User {
   @Column(nullable = false)
   private String password;
 
+  @Comment("자기소개")
   private String bio;
 
+  @Comment("이미지")
   private String image;
 
   @Comment("생성날짜")
