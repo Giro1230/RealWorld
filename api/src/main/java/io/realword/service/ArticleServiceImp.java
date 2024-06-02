@@ -1,6 +1,7 @@
 package io.realword.service;
 
 import io.realword.controller.dto.req.article.CreatedArticleReq;
+import io.realword.controller.dto.req.article.UpdatedArticleReq;
 import io.realword.controller.dto.res.article.*;
 import io.realword.domain.Article;
 import io.realword.domain.Favorite;
@@ -210,6 +211,186 @@ public class ArticleServiceImp implements ArticleInterface {
     } catch (Exception e) {
       logger.error("Failed to get article list by feed", e);
       throw new RuntimeException("Failed to get article list by feed", e);
+    }
+  }
+
+  @Override
+  public List<AllArticlesRes> getAllArticlesWithFavoriteStatus(String email) {
+    try {
+      User user = userRepository.findByEmail(email);
+      List<Long> favorites = favoriteRepository.findFavoritedArticleIdsByUser(user);
+      List<Article> articles = articleRepository.findAll();
+
+      return articles.stream()
+        .map(article -> {
+          boolean isFavorited = favorites.contains(article.getId());
+
+          return AllArticlesRes.builder()
+            .title(article.getTile())
+            .slug(article.getSlug())
+            .description(article.getDescription())
+            .body(article.getBody())
+            .author(article.getUser().getUsername())
+            .tagList(article.getTags().stream().map(Tag::getTagName).collect(Collectors.toList()))
+            .favorited(isFavorited)
+            .favoritesCount(article.getFavorites().size())
+            .createdAt(article.getCreatedAt())
+            .updatedAt(article.getUpdatedAt())
+            .build();
+        })
+        .collect(Collectors.toList());
+    } catch (Exception e) {
+      logger.error("Failed to get article list width favorite", e);
+      throw new RuntimeException("Failed to get article list width favorite", e);
+    }
+  }
+
+  @Override
+  public List<AllArticlesByAuthorRes> getAllArticlesByUser(String email) {
+    try {
+      User user = userRepository.findByEmail(email);
+      List<Long> favorites = favoriteRepository.findFavoritedArticleIdsByUser(user);
+      List<Article> articles = articleRepository.findAll();
+
+      return articles.stream()
+        .map(article -> {
+          boolean isFavorited = favorites.contains(article.getId());
+
+          return AllArticlesByAuthorRes.builder()
+            .title(article.getTile())
+            .slug(article.getSlug())
+            .description(article.getDescription())
+            .body(article.getBody())
+            .author(article.getUser().getUsername())
+            .tagList(article.getTags().stream().map(Tag::getTagName).collect(Collectors.toList()))
+            .favorited(isFavorited)
+            .favoritesCount(article.getFavorites().size())
+            .createdAt(article.getCreatedAt())
+            .updatedAt(article.getUpdatedAt())
+            .build();
+        })
+        .collect(Collectors.toList());
+    } catch (Exception e) {
+      logger.error("Failed to get article list by user", e);
+      throw new RuntimeException("Failed to get article list by user", e);
+    }
+  }
+
+  @Override
+  public List<AllArticlesByAuthorRes> getArticlesByAuthorWithFavoriteStatus(String email, String username) {
+    try {
+      User user = userRepository.findByEmail(email);
+      List<Long> favorites = favoriteRepository.findFavoritedArticleIdsByUser(user);
+      List<Article> articles = articleRepository.findArticlesByUserName(username);
+
+      return articles.stream()
+        .map(article -> {
+          boolean isFavorited = favorites.contains(article.getId());
+
+          return AllArticlesByAuthorRes.builder()
+            .title(article.getTile())
+            .slug(article.getSlug())
+            .description(article.getDescription())
+            .body(article.getBody())
+            .author(article.getUser().getUsername())
+            .tagList(article.getTags().stream().map(Tag::getTagName).collect(Collectors.toList()))
+            .favorited(isFavorited)
+            .favoritesCount(article.getFavorites().size())
+            .createdAt(article.getCreatedAt())
+            .updatedAt(article.getUpdatedAt())
+            .build();
+        })
+        .collect(Collectors.toList());
+    } catch (Exception e) {
+      logger.error("Failed to get article list by author width favorite", e);
+      throw new RuntimeException("Failed to get article list by author width favorite", e);
+    }
+  }
+
+  @Override
+  public ArticleBySlugRes getArticleBySlug(String email, String slug) {
+    try {
+      User user = userRepository.findByEmail(email);
+      List<Long> favorites = favoriteRepository.findFavoritedArticleIdsByUser(user);
+      Article article = articleRepository.findBySlug(slug);
+
+
+      boolean isFavorited = favorites.contains(article.getId());
+
+      return ArticleBySlugRes.builder()
+        .title(article.getTile())
+        .slug(article.getSlug())
+        .description(article.getDescription())
+        .body(article.getBody())
+        .author(article.getUser().getUsername())
+        .tagList(article.getTags().stream().map(Tag::getTagName).collect(Collectors.toList()))
+        .favorited(isFavorited)
+        .favoritesCount(article.getFavorites().size())
+        .createdAt(article.getCreatedAt())
+        .updatedAt(article.getUpdatedAt())
+        .build();
+    } catch (Exception e) {
+      logger.error("Failed to get article by slug", e);
+      throw new RuntimeException("Failed to get article by slug", e);
+    }
+  }
+
+  @Override
+  public List<AllArticlesByAuthorByTagRes> getArticlesByTagWithFavoriteStatus(String email, String tag) {
+    try {
+      User user = userRepository.findByEmail(email);
+      List<Long> favorites = favoriteRepository.findFavoritedArticleIdsByUser(user);
+      List<Article> articles = articleRepository.findArticlesByTag(tag);
+
+      return articles.stream()
+        .map(article -> {
+          boolean isFavorited = favorites.contains(article.getId());
+
+          return AllArticlesByAuthorByTagRes.builder()
+            .title(article.getTile())
+            .slug(article.getSlug())
+            .description(article.getDescription())
+            .body(article.getBody())
+            .author(article.getUser().getUsername())
+            .tagList(article.getTags().stream().map(Tag::getTagName).collect(Collectors.toList()))
+            .favorited(isFavorited)
+            .favoritesCount(article.getFavorites().size())
+            .createdAt(article.getCreatedAt())
+            .updatedAt(article.getUpdatedAt())
+            .build();
+        })
+        .collect(Collectors.toList());
+    } catch (Exception e) {
+      logger.error("Failed to get article list by tag width favorite", e);
+      throw new RuntimeException("Failed to get article list by tag width favorite", e);
+    }
+  }
+
+  public UpdatedArticleRes updatedArticle(String email, String slug, UpdatedArticleReq updatedArticle) {
+    try {
+      User user = userRepository.findByEmail(email);
+      Article article = articleRepository.findBySlugAndUser(slug, user);
+      article.update(updatedArticle.getBody());
+
+      List<Long> favorites = favoriteRepository.findFavoritedArticleIdsByUser(user);
+
+      boolean isFavorited = favorites.contains(article.getId());
+
+      return UpdatedArticleRes.builder()
+        .title(article.getTile())
+        .slug(article.getSlug())
+        .description(article.getDescription())
+        .body(article.getBody())
+        .author(article.getUser().getUsername())
+        .tagList(article.getTags().stream().map(Tag::getTagName).collect(Collectors.toList()))
+        .favorited(isFavorited)
+        .favoritesCount(article.getFavorites().size())
+        .createdAt(article.getCreatedAt())
+        .updatedAt(article.getUpdatedAt())
+        .build();
+    } catch (Exception e) {
+      logger.error("Failed to updated article", e);
+      throw new RuntimeException("Failed to updated article", e);
     }
   }
 }

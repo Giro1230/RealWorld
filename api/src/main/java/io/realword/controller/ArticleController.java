@@ -1,6 +1,8 @@
 package io.realword.controller;
 
 import io.realword.controller.dto.req.article.CreatedArticleReq;
+import io.realword.controller.dto.req.article.UpdatedArticleReq;
+import io.realword.controller.dto.req.user.UpdateUserReq;
 import io.realword.controller.dto.res.article.*;
 import io.realword.domain.Article;
 import io.realword.security.jwt.Jwt;
@@ -89,7 +91,7 @@ public class ArticleController {
     }
   }
 
-  @PostMapping("/articles")
+  @PostMapping
   public ResponseEntity<CreatedArticleRes> crestedArticle(@RequestBody CreatedArticleReq data, @AuthenticationPrincipal String email){
     try {
       logger.info("Post '/articles' Request Data => {}, {}", data, email);
@@ -116,6 +118,111 @@ public class ArticleController {
     } catch (Exception e) {
       logger.error("Error fetching articles", e);
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
+  @GetMapping
+  public ResponseEntity<?> getAllArticlesByUser(@AuthenticationPrincipal String email) {
+    try {
+      logger.info("Get '/articles' Request Data => {}",email);
+
+      List<FeedArticleRes> returnData = articleService.getFeed(email);
+      logger.info("Get '/articles' Responses Data => {}",returnData);
+
+      return ResponseEntity.ok(returnData);
+    } catch (Exception e) {
+      logger.error("Error fetching articles", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
+  @GetMapping
+  public ResponseEntity<List<AllArticlesRes>> getAllArticlesWithFavoriteStatus(@AuthenticationPrincipal String email) {
+    try {
+      logger.info("Get '/articles' Request Data => {}",email);
+
+      List<AllArticlesRes> returnData = articleService.getAllArticlesWithFavoriteStatus(email);
+      logger.info("Get '/articles' Responses Data => {}",returnData);
+
+      return ResponseEntity.ok(returnData);
+    } catch (Exception e) {
+      logger.error("Error fetching articles", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
+  @GetMapping
+  public ResponseEntity<List<AllArticlesByAuthorRes>> getAllArticlesUser(@AuthenticationPrincipal String email) {
+    try {
+      logger.info("Get '/articles' Request Data => {}",email);
+
+      List<AllArticlesByAuthorRes> returnData = articleService.getAllArticlesByUser(email);
+      logger.info("Get '/articles' Responses Data => {}",returnData);
+
+      return ResponseEntity.ok(returnData);
+    } catch (Exception e) {
+      logger.error("Error fetching articles", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
+  @GetMapping("?author={username}")
+  public ResponseEntity<List<AllArticlesByAuthorRes>> getArticlesByAuthorWithFavoriteStatus(@AuthenticationPrincipal String email, @PathVariable String username) {
+    try {
+      logger.info("Get '/articles?author={username}' Request Data => {}, {}", email, username);
+
+      List<AllArticlesByAuthorRes> returnData = articleService.getArticlesByAuthorWithFavoriteStatus(email,username);
+      logger.info("Get '/articles?author={username}' Responses Data => {}",returnData);
+
+      return ResponseEntity.ok(returnData);
+    } catch (Exception e) {
+      logger.error("Error fetching articles", e);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+  }
+
+  @GetMapping("/{slug}")
+  public ResponseEntity<ArticleBySlugRes> getArticleBySlug(@AuthenticationPrincipal String email, @PathVariable String slug){
+    try {
+      logger.info("Get '/articles?author={slug}' Request Data => {}, {}", email, slug);
+
+      ArticleBySlugRes returnData = articleService.getArticleBySlug(email, slug);
+      logger.info("Get '/articles?author={slug}' Responses Data => {}",returnData);
+
+      return ResponseEntity.ok(returnData);
+    } catch (Exception e) {
+      logger.error("Error fetching articles", e);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+  }
+
+  @GetMapping("?tag={tagname}")
+  public ResponseEntity<List<AllArticlesByAuthorByTagRes>> getArticlesByTag(@AuthenticationPrincipal String email, @PathVariable String tagname) {
+    try {
+      logger.info("Get '/articles?tag={tagname}' Request Data => {},{}", email,tagname);
+
+      List<AllArticlesByAuthorByTagRes> returnData = articleService.getArticlesByTagWithFavoriteStatus(email, tagname);
+      logger.info("Get '/articles?tag={tagname}' Responses Data => {}",returnData);
+
+      return ResponseEntity.ok(returnData);
+    } catch (Exception e) {
+      logger.error("Error fetching articles", e);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+  }
+
+  @PutMapping("/{slug}")
+  public ResponseEntity<UpdatedArticleRes> updateArticle(@AuthenticationPrincipal String email, @PathVariable String slug, @RequestBody UpdatedArticleReq updatedArticle) {
+    try {
+      logger.info("Get '/articles?author={slug}' Request Data => {}, {}, {}", email, slug, updatedArticle);
+
+      UpdatedArticleRes returnData = articleService.updatedArticle(email, slug, updatedArticle);
+      logger.info("Get '/articles?author={slug}' Responses Data => {}",returnData);
+
+      return ResponseEntity.ok(returnData);
+    } catch (Exception e) {
+      logger.error("Error fetching articles", e);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
   }
 }

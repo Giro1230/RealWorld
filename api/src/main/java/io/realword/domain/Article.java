@@ -69,4 +69,8 @@ public class Article {
   protected void onUpdate() {
     this.updatedAt = LocalDateTime.now();
   }
+
+  public void update(String body){
+    this.body = body;
+  }
 }

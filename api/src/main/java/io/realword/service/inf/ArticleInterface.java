@@ -14,4 +14,9 @@ public interface ArticleInterface {
 
   CreatedArticleRes createdArticle(CreatedArticleReq data, String email);
   List<FeedArticleRes> getFeed(String email);
+  List<AllArticlesRes> getAllArticlesWithFavoriteStatus(String email);
+  List<AllArticlesByAuthorRes> getAllArticlesByUser(String email);
+  List<AllArticlesByAuthorRes> getArticlesByAuthorWithFavoriteStatus(String email, String username);
+  ArticleBySlugRes getArticleBySlug(String email, String slug);
+  List<AllArticlesByAuthorByTagRes> getArticlesByTagWithFavoriteStatus(String email, String tag);
 }
