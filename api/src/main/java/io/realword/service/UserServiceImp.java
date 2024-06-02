@@ -73,10 +73,7 @@ public class UserServiceImp implements UserInterface {
   @Override
   public LoginUserRes login(LoginUserReq data) {
     // getUserEmail
-    Optional<User> optionalUser = userRepository.findByEmail(data.getEmail());
-
-    // Optional -> User
-    User user = optionalUser.orElseThrow(() -> new RuntimeException("Invalid credentials"));
+    User user = userRepository.findByEmail(data.getEmail());
 
     // password checked
     if (passwordEncoder.matches(data.getPassword(), user.getPassword())) {
@@ -144,8 +141,7 @@ public class UserServiceImp implements UserInterface {
   public User getUserByEmail(String userEmail) {
     try {
 
-      return userRepository.findByEmail(userEmail)
-        .orElseThrow(() -> new RuntimeException("User not found with email: " + userEmail));
+      return userRepository.findByEmail(userEmail);
     } catch (Exception e) {
 
       logger.error("Failed to get user by email: " + userEmail, e);
