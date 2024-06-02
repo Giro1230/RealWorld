@@ -2,9 +2,7 @@ package io.realword.controller;
 
 import io.realword.controller.dto.req.article.CreatedArticleReq;
 import io.realword.controller.dto.req.article.UpdatedArticleReq;
-import io.realword.controller.dto.req.user.UpdateUserReq;
 import io.realword.controller.dto.res.article.*;
-import io.realword.domain.Article;
 import io.realword.security.jwt.Jwt;
 import io.realword.service.ArticleServiceImp;
 import org.slf4j.Logger;
@@ -121,23 +119,8 @@ public class ArticleController {
     }
   }
 
-  @GetMapping
-  public ResponseEntity<?> getAllArticlesByUser(@AuthenticationPrincipal String email) {
-    try {
-      logger.info("Get '/articles' Request Data => {}",email);
-
-      List<FeedArticleRes> returnData = articleService.getFeed(email);
-      logger.info("Get '/articles' Responses Data => {}",returnData);
-
-      return ResponseEntity.ok(returnData);
-    } catch (Exception e) {
-      logger.error("Error fetching articles", e);
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
-  }
-
-  @GetMapping
-  public ResponseEntity<List<AllArticlesRes>> getAllArticlesWithFavoriteStatus(@AuthenticationPrincipal String email) {
+  @GetMapping("/all")
+  public ResponseEntity<List<AllArticlesRes>> getAllArticlesByUser(@AuthenticationPrincipal String email) {
     try {
       logger.info("Get '/articles' Request Data => {}",email);
 
@@ -151,7 +134,7 @@ public class ArticleController {
     }
   }
 
-  @GetMapping
+  @GetMapping("/author")
   public ResponseEntity<List<AllArticlesByAuthorRes>> getAllArticlesUser(@AuthenticationPrincipal String email) {
     try {
       logger.info("Get '/articles' Request Data => {}",email);
@@ -225,4 +208,67 @@ public class ArticleController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
   }
+
+  @DeleteMapping("/{slug}")
+  public ResponseEntity<Boolean> deleteArticle(@AuthenticationPrincipal String email, @PathVariable String slug){
+    try {
+      logger.info("Get '/articles?author={slug}' Request Data => {}, {}", email, slug);
+
+      Boolean returnData = articleService.deleteArticle(email, slug);
+      logger.info("Get '/articles?author={slug}' Responses Data => {}",returnData);
+
+      return ResponseEntity.ok(returnData);
+    } catch (Exception e) {
+      logger.error("Error fetching articles", e);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+  }
+
+  @PostMapping("/{slug}/favorite")
+  public ResponseEntity<CreatedFavoriteRes> createdFavorite(@AuthenticationPrincipal String email, @PathVariable String slug) {
+    try {
+      logger.info("Post '/articles/{slug}/favorite' Request Data => {}, {}", email, slug);
+
+      CreatedFavoriteRes returnData = articleService.createdFavorite(email, slug);
+      logger.info("Post '/articles/{slug}/favorite' Responses Data => {}", returnData);
+
+      return ResponseEntity.ok(returnData);
+    } catch (Exception e) {
+      logger.error("Error fetching articles", e);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+  }
+
+  @GetMapping("?favorited={username}")
+  public ResponseEntity<List<ArticlesFavoritedbyUsernameRes>> getArticlesByUserWidthFavorite(@AuthenticationPrincipal String email, @PathVariable String username) {
+    try {
+      logger.info("Get '/articles?favorite={username}' Request Data => {}, {}", email, username);
+
+      List<ArticlesFavoritedbyUsernameRes> returnData = articleService.getArticleByUserWidthFavorite(email, username);
+      logger.info("Get '/articles?favorite={username}' Responses Data => {}", returnData);
+
+      return ResponseEntity.ok(returnData);
+    } catch (Exception e) {
+      logger.error("Error fetching articles", e);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+  }
+
+  @DeleteMapping("/{slug}/favorite")
+  public ResponseEntity<Boolean> deletedFavorite (@AuthenticationPrincipal String email, @PathVariable String slug) {
+    try {
+      logger.info("Delete '/articles/{slug}/favorite' Request Data => {}, {}", email, slug);
+
+      Boolean returnData = articleService.deletedFavorite(email, slug);
+      logger.info("Delete '/articles/{slug}/favorite' Responses Data => {}", returnData);
+
+      return ResponseEntity.ok(returnData);
+    } catch (Exception e) {
+      logger.error("Error fetching articles", e);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+  }
+
+
+
 }

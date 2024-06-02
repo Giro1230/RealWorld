@@ -14,6 +14,7 @@ import io.realword.service.inf.ArticleInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -366,6 +367,7 @@ public class ArticleServiceImp implements ArticleInterface {
     }
   }
 
+  @Override
   public UpdatedArticleRes updatedArticle(String email, String slug, UpdatedArticleReq updatedArticle) {
     try {
       User user = userRepository.findByEmail(email);
@@ -391,6 +393,101 @@ public class ArticleServiceImp implements ArticleInterface {
     } catch (Exception e) {
       logger.error("Failed to updated article", e);
       throw new RuntimeException("Failed to updated article", e);
+    }
+  }
+
+  @Override
+  public Boolean deleteArticle(String email, String slug){
+    try {
+      User user = userRepository.findByEmail(email);
+      Article article = articleRepository.findBySlugAndUser(slug, user);
+
+      articleRepository.delete(article);
+
+      return true;
+    } catch (Exception e) {
+      logger.error("Failed to deleted article", e);
+      return false;
+    }
+  }
+
+  @Override
+  public CreatedFavoriteRes createdFavorite(String email, String slug){
+    try {
+      User user = userRepository.findByEmail(email);
+      Article article = articleRepository.findBySlugAndUser(slug, user);
+      Favorite favorite = Favorite.builder()
+        .user(user)
+        .article(article)
+        .build();
+
+      favoriteRepository.save(favorite);
+
+      return CreatedFavoriteRes.builder()
+        .title(article.getTile())
+        .slug(article.getSlug())
+        .description(article.getDescription())
+        .body(article.getBody())
+        .author(article.getUser().getUsername())
+        .tagList(article.getTags().stream().map(Tag::getTagName).collect(Collectors.toList()))
+        .favorited(true)
+        .favoritesCount(article.getFavorites().size())
+        .createdAt(article.getCreatedAt())
+        .updatedAt(article.getUpdatedAt())
+        .build();
+    } catch (Exception e) {
+      logger.error("Failed to created favorite", e);
+      throw new RuntimeException("Failed to created favorite", e);
+    }
+  }
+
+  @Override
+  public List<ArticlesFavoritedbyUsernameRes> getArticleByUserWidthFavorite (String email, String username) {
+    try {
+      User user = userRepository.findByEmail(email);
+      User author = userRepository.findByUsername(username);
+
+      List<Article> articles = favoriteRepository.findByFavoritesContaining(author);
+      List<Long> favorites = favoriteRepository.findFavoritedArticleIdsByUser(user);
+
+      return articles.stream()
+        .map(article -> {
+          boolean isFavorited = favorites.contains(article.getId());
+
+          return ArticlesFavoritedbyUsernameRes.builder()
+            .title(article.getTile())
+            .slug(article.getSlug())
+            .description(article.getDescription())
+            .body(article.getBody())
+            .author(article.getUser().getUsername())
+            .tagList(article.getTags().stream().map(Tag::getTagName).collect(Collectors.toList()))
+            .favorited(isFavorited)
+            .favoritesCount(article.getFavorites().size())
+            .createdAt(article.getCreatedAt())
+            .updatedAt(article.getUpdatedAt())
+            .build();
+        })
+        .collect(Collectors.toList());
+    } catch (Exception e) {
+      logger.error("Failed to get article by user width favorite", e);
+      throw new RuntimeException("Failed to get article by user width favorite", e);
+    }
+  }
+
+  @Override
+  public Boolean deletedFavorite(String email, String slug){
+    try {
+      User user = userRepository.findByEmail(email);
+      Article article = articleRepository.findBySlug(slug);
+
+      Favorite favorite = favoriteRepository.findFavoriteArticleIdsByUserAndArticle(user, article);
+
+      favoriteRepository.delete(favorite);
+
+      return true;
+    } catch (Exception e) {
+      logger.error("Failed to deleted favorite", e);
+      return false;
     }
   }
 }
