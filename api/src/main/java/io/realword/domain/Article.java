@@ -22,7 +22,12 @@ public class Article {
   private Long id;
 
   @Comment("게시물 제목")
+  @Column(length = 50)
   private String tile;
+
+  @Comment("게시물 제복 분할")
+  @Column(length = 100)
+  private String slug;
 
   @Comment("부제목")
   private String description;
@@ -43,6 +48,10 @@ public class Article {
   @Comment("댓글")
   @OneToMany(mappedBy = "article", fetch = FetchType.LAZY)
   private List<io.realword.domain.Comment> comments = new ArrayList<>();
+
+  @Comment("좋아요")
+  @OneToMany(mappedBy = "article", fetch = FetchType.LAZY)
+  private List<Favorite> favorites = new ArrayList<>();
 
   @Comment("생성날짜")
   @Column(nullable = false)

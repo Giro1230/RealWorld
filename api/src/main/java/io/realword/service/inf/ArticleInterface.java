@@ -1,11 +1,17 @@
 package io.realword.service.inf;
 
+import io.realword.controller.dto.req.article.CreatedArticleReq;
+import io.realword.controller.dto.res.article.*;
+
 import java.util.List;
 
 public interface ArticleInterface {
-//  List<ArticleVO> getAllArticle();
-//  List<ArticleVO> getArticlesByAuthor(ArticleVO name);
-//  List<ArticleVO> getArticlesByFavorited(ArticleVO name);
-//  List<ArticleVO> getArticlesByTag(ArticleVO tag);
-//  ArticleVO createdArticle(ArticleVO a);
+  List<AllArticlesRes> getAllArticle();
+  List<AllArticlesByAuthorRes> getArticlesByAuthor(String name);
+  List<AllArticlesByFavoritedByUsernameRes> getArticlesByFavorited(String name);
+  List<AllArticlesByAuthorByTagRes> getArticlesByTag(String tag);
+
+
+  CreatedArticleRes createdArticle(CreatedArticleReq data, String email);
+  List<FeedArticleRes> getFeed(String email);
 }
