@@ -447,7 +447,7 @@ public class ArticleServiceImp implements ArticleInterface {
       User user = userRepository.findByEmail(email);
       User author = userRepository.findByUsername(username);
 
-      List<Article> articles = favoriteRepository.findByFavoritesContaining(author);
+      List<Article> articles = favoriteRepository.findArticlesByUser(author);
       List<Long> favorites = favoriteRepository.findFavoritedArticleIdsByUser(user);
 
       return articles.stream()
