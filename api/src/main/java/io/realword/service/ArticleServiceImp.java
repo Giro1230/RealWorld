@@ -14,7 +14,6 @@ import io.realword.service.inf.ArticleInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -66,7 +65,6 @@ public class ArticleServiceImp implements ArticleInterface {
           .updatedAt(article.getUpdatedAt())
           .build())
         .collect(Collectors.toList());
-
     } catch (Exception e) {
       logger.error("Failed to get article list", e);
       throw new RuntimeException("Failed to get article list", e);
@@ -152,8 +150,8 @@ public class ArticleServiceImp implements ArticleInterface {
   public CreatedArticleRes createdArticle(CreatedArticleReq data, String email) {
     try {
       List<Tag> tags = new ArrayList<>();
-      for (String tagName : data.getTagList()) {
 
+      for (String tagName : data.getTagList()) {
         Tag tag = Tag.builder()
           .tagName(tagName)
           .build();

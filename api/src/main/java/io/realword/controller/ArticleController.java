@@ -95,7 +95,7 @@ public class ArticleController {
       logger.info("Post '/articles' Request Data => {}, {}", data, email);
 
       CreatedArticleRes returnData = articleService.createdArticle(data, email);
-      logger.info("Post '/articles?tag={tagname}' Responses Data => {}",returnData);
+      logger.info("Post '/articles' Responses Data => {}",returnData);
 
       return ResponseEntity.ok(returnData);
     } catch (Exception e) {

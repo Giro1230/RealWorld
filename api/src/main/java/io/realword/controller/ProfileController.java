@@ -34,6 +34,7 @@ public class ProfileController {
     try {
 
       logger.info("Get '/profiles/celeb_{username}' Request Data = {}, {}", user, data);
+
       GetFollowRes returnData = followService.getProfile(user, data);
       logger.info("Get '/profiles/celeb_{username}' Responses Data = {}", returnData);
 
