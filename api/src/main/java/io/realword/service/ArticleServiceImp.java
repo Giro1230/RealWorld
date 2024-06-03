@@ -1,13 +1,12 @@
 package io.realword.service;
 
 import io.realword.controller.dto.req.article.CreatedArticleReq;
+import io.realword.controller.dto.req.article.CreatedCommentReq;
 import io.realword.controller.dto.req.article.UpdatedArticleReq;
 import io.realword.controller.dto.res.article.*;
-import io.realword.domain.Article;
-import io.realword.domain.Favorite;
-import io.realword.domain.Tag;
-import io.realword.domain.User;
+import io.realword.domain.*;
 import io.realword.repository.ArticleRepository;
+import io.realword.repository.CommentRepository;
 import io.realword.repository.FavoriteRepository;
 import io.realword.repository.UserRepository;
 import io.realword.service.inf.ArticleInterface;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,18 +27,21 @@ public class ArticleServiceImp implements ArticleInterface {
   private final ArticleRepository articleRepository;
   private final FavoriteRepository favoriteRepository;
   private final UserRepository userRepository;
+  private final CommentRepository commentRepository;
 
   @Autowired
   public ArticleServiceImp(
     ArticleRepository articleRepository,
     FavoriteRepository favoriteRepository,
-    UserRepository userRepository
+    UserRepository userRepository,
+    CommentRepository commentRepository
   )
   {
     this.logger = LoggerFactory.getLogger(ArticleServiceImp.class);
     this.articleRepository = articleRepository;
     this.favoriteRepository = favoriteRepository;
     this.userRepository = userRepository;
+    this.commentRepository = commentRepository;
   }
 
   // Slug 만드는 함수
@@ -485,6 +488,78 @@ public class ArticleServiceImp implements ArticleInterface {
       return true;
     } catch (Exception e) {
       logger.error("Failed to deleted favorite", e);
+      return false;
+    }
+  }
+
+  @Override
+  public CreatedCommentRes createdComment(String email, String slug, CreatedCommentReq data){
+    try {
+      User user = userRepository.findByEmail(email);
+      Article article = articleRepository.findBySlug(slug);
+
+      Comment comment = commentRepository.save(Comment.builder()
+                                                .user(user)
+                                                .article(article)
+                                                .body(data.getBody())
+                                                .build());
+
+      return CreatedCommentRes.builder()
+        .id(comment.getId())
+        .body(comment.getBody())
+        .author(comment.getUser().getUsername())
+        .createdAt(comment.getCreatedAt())
+        .updatedAt(comment.getUpdatedAt())
+        .build();
+    } catch (Exception e) {
+      logger.error("Failed to created comment", e);
+      throw new RuntimeException("Failed to created comment", e);
+    }
+  }
+
+  @Override
+  public List<GetCommentRes> getCommentByArticle(String email, String slug){
+    try {
+      Article article = articleRepository.findBySlug(slug);
+      User user = userRepository.findByEmail(email);
+
+      List<Comment> comments;
+
+      if (email == null) {
+        comments = commentRepository.findByArticle(article);
+      } else {
+        comments = commentRepository.findByArticleAndUser(article, user);
+      }
+
+      return comments.stream()
+        .map(comment -> GetCommentRes.builder()
+          .id(comment.getId())
+          .body(comment.getBody())
+          .createdAt(comment.getCreatedAt())
+          .updatedAt(comment.getUpdatedAt())
+          .author(comment.getUser().getUsername())
+          .build())
+        .collect(Collectors.toList());
+    } catch (Exception e){
+      logger.error("Failed to get comments", e);
+      throw new RuntimeException("Failed to get comments", e);
+    }
+  }
+
+  @Override
+  public Boolean deletedComment(String email, String slug, Long id) {
+    try {
+      User user = userRepository.findByEmail(email);
+      Article article = articleRepository.findBySlug(slug);
+      Comment comment = commentRepository.getReferenceById(id);
+
+      if(Objects.equals(comment.getUser(), user) && Objects.equals(comment.getArticle(), article)) {
+        commentRepository.delete(comment);
+      }
+
+      return true;
+    } catch (Exception e) {
+      logger.error("Failed to deleted comments", e);
       return false;
     }
   }

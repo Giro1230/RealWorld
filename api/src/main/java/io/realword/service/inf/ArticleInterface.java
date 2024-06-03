@@ -1,6 +1,7 @@
 package io.realword.service.inf;
 
 import io.realword.controller.dto.req.article.CreatedArticleReq;
+import io.realword.controller.dto.req.article.CreatedCommentReq;
 import io.realword.controller.dto.req.article.UpdatedArticleReq;
 import io.realword.controller.dto.res.article.*;
 
@@ -26,4 +27,8 @@ public interface ArticleInterface {
   CreatedFavoriteRes createdFavorite(String email, String slug);
   List<ArticlesFavoritedbyUsernameRes> getArticleByUserWidthFavorite (String email, String username);
   Boolean deletedFavorite(String email, String slug);
+
+  CreatedCommentRes createdComment(String email, String slug, CreatedCommentReq data);
+  List<GetCommentRes> getCommentByArticle(String email, String slug);
+  Boolean deletedComment(String email, String slug, Long id);
 }
