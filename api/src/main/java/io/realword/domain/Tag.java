@@ -1,4 +1,4 @@
-package io.realword.model.entity;
+package io.realword.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,34 +8,22 @@ import java.time.LocalDateTime;
 
 @Builder
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user")
-public class User {
-
+@Table
+public class Tag {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Comment("유저 이름")
   @Column(nullable = false)
-  private String username;
+  private String tagName;
 
-  @Comment("유저 이메일")
-  @Column(nullable = false, unique = true)
-  private String email;
-
-  @Comment("비밀번호")
-  @Column(nullable = false)
-  private String password;
-
-  @Column
-  private String bio;
-
-  @Column
-  private String image;
+  @Comment("게시글")
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "article_id",nullable = false)
+  private Article article;
 
   @Comment("생성날짜")
   @Column(nullable = false)
@@ -44,4 +32,14 @@ public class User {
   @Comment("수정날짜")
   @Column
   private LocalDateTime updatedAt;
+
+  @PrePersist
+  protected void onCreate() {
+    this.createdAt = LocalDateTime.now();
+  }
+
+  @PreUpdate
+  protected void onUpdate() {
+    this.updatedAt = LocalDateTime.now();
+  }
 }

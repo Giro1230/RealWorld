@@ -1,11 +1,11 @@
 CREATE TABLE user
 (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  username VARCHAR(13) NOT NULL,
+  username VARCHAR(20) NOT NULL,
   email VARCHAR(50) NOT NULL,
-  password VARCHAR(50) NOT NULL,
+  password VARCHAR(255) NOT NULL,
   bio VARCHAR(255),
   image VARCHAR(255),
-  createdAt DATETIME NOT NULL,
-  updatedAt DATETIME
+  created_at DATETIME NOT NULL,
+  updated_at DATETIME
 );
